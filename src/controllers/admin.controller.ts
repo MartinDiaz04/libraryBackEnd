@@ -18,7 +18,6 @@ const registerAdmin = async ({body}:Request, res:Response) =>{
     }catch(e){
         handleHttp(res, "Error");
     }
-    
 }
 
 const loginAdmin = async ({body}:Request, res:Response) =>{
