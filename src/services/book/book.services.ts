@@ -5,30 +5,38 @@ const getAllBooksService = async () => {
     const books = await BookModel.find();
     return books;
 }
-const getBookByIsbnService = async (isbn:string) => {
+const getBookByISBNService = async (isbn:string) => {
     const book = await BookModel.findOne({isbn});
     return book;
 }
 
-const createBookService = async (book:Book) => {
-    const checkIs = await BookModel.findOne({isbn: book.ISBN});
+const createBookService = async ({title, description, ISBN, year}:Book) => {
+    const checkIs = await BookModel.findOne({ISBN});
+    console.log(checkIs)
     if(checkIs){
         return {message: "Book already exists"}
     }
-    if(book.title == "" || book.author == "" || book.ISBN == "" || book.genre == ""){
+    if(title == "" ||  ISBN == ""){
         return {message: "All fields are required"}
     }
-    const newBook = await BookModel.create(book);
+    const newBook = await BookModel.create({title, description, ISBN, year});
     return {message: "Book created successfully", newBook}
 }
-const updateBookService = async (isbn:string, book:Book) => {
-    const checkIs = await BookModel.findOne({isbn});
-    if(!checkIs){
-        return {message: "Book not found"}
+
+
+
+const updateBookService = async (isbn: string, book: Book) => {
+    const checkIs = await BookModel.findOne({ isbn });
+    if (!checkIs) {
+        return { message: "Book not found" };
     }
-    const updatedBook = await BookModel.findOneAndUpdate({ISBN:isbn, book});
-    return {message: "Book updated successfully", updatedBook}
+    const updatedBook = await BookModel.findOneAndUpdate({ isbn }, book, { new: true });
+    return { message: "Book updated successfully", updatedBook };
 }
+
+
+
+
 const deleteBookService = async (isbn:string) => {
     const checkIs = await BookModel.findOneAndDelete({isbn});
     if(!checkIs){
@@ -37,4 +45,4 @@ const deleteBookService = async (isbn:string) => {
     return {message: "Book deleted successfully"}    
 }
 
-export {getAllBooksService, getBookByIsbnService, createBookService, updateBookService, deleteBookService}
+export {getAllBooksService, getBookByISBNService, createBookService, updateBookService, deleteBookService}

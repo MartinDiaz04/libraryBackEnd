@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import {
   getAllBooksService,
-  getBookByIsbnService,
+  getBookByISBNService,
   createBookService,
   updateBookService,
   deleteBookService,
@@ -17,10 +17,10 @@ const getBooks = async (req: Request, res: Response) => {
     res.send("Error");
   }
 };
-const getBookById = async ({ params }: Request, res: Response) => {
+const getBookByISBN = async ({ params }: Request, res: Response) => {
   try {
     const { isbn } = params;
-    const response = await getBookByIsbnService(isbn);
+    const response = await getBookByISBNService(isbn);
     const data = response ? response : "Book not found";
     res.send(data);
   } catch (e) {
@@ -50,21 +50,21 @@ const createBook = async ({ body }: Request, res: Response) => {
 };
 
 const updateBook = async ({ params, body }: Request, res: Response) => {
-  try {
-    const { isbn } = params;
-    const response = await updateBookService(isbn, body);
-    if (response.message == "Book updated successfully") {
-      res.status(200);
-      res.send(response);
-    }
-    if (response.message == "Book not found") {
-      res.status(404);
-      res.send(response);
-    }
-  } catch (e) {
-    res.status(500);
-    res.send("Error");
-  }
+    try {
+        const { isbn } = params;
+        const response = await updateBookService(isbn, body);
+        if (response.message === "Book updated successfully") {
+          res.status(200);
+          res.send(response);
+        }
+        if (response.message === "Book not found") {
+          res.status(404);
+          res.send(response);
+        }
+      } catch (e) {
+        res.status(500);
+        res.send("Error");
+      }
 };
 
 const deleteBook = async ({ params }: Request, res: Response) => {
@@ -85,4 +85,4 @@ const deleteBook = async ({ params }: Request, res: Response) => {
   }
 };
 
-export { getBooks, getBookById, createBook, updateBook, deleteBook };
+export { getBooks, getBookByISBN, createBook, updateBook, deleteBook };
