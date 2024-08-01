@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import {
   getAllBooksService,
-  getBookByISBNService,
+  getBookByIdService,
   createBookService,
   updateBookService,
   deleteBookService,
@@ -10,79 +10,53 @@ import {
 const getBooks = async (req: Request, res: Response) => {
   try {
     const response = await getAllBooksService();
-    res.status(200);
-    res.send(response);
+    res.status(200).send(response);
   } catch (e) {
-    res.status(500);
-    res.send("Error");
+    res.status(500).send("Error fetching books");
   }
 };
-const getBookByISBN = async ({ params }: Request, res: Response) => {
-  try {
-    const { isbn } = params;
-    const response = await getBookByISBNService(isbn);
+
+const getBookById = async ({params}: Request, res: Response) => {
+  try {    
+    const { id } = params;
+    const response = await getBookByIdService(Number(id));
     const data = response ? response : "Book not found";
-    res.send(data);
+    res.status(response ? 200 : 404).send(data);
   } catch (e) {
-    res.status(500);
-    res.send("Error");
+    res.status(500).send("Error fetching book by ID");
   }
 };
 
-const createBook = async ({ body }: Request, res: Response) => {
+const createBook = async (req: Request, res: Response) => {
   try {
-    const response = await createBookService(body);
-    if (response.message == "Book created successfully") {
-      res.status(201);
-      res.send(response);
-    }
-    if (
-      response.message == "Book already exists" ||
-      response.message == "All fields are required"
-    ) {
-      res.status(400);
-      res.send(response);
-    }
+    const response = await createBookService(req.body);
+    const status = response.message === "Book created successfully" ? 201 : 400;
+    res.status(status).send(response);
   } catch (e) {
-    res.status(500);
-    res.send("Error");
+    res.status(500).send("Error creating book");
   }
 };
 
-const updateBook = async ({ params, body }: Request, res: Response) => {
-    try {
-        const { isbn } = params;
-        const response = await updateBookService(isbn, body);
-        if (response.message === "Book updated successfully") {
-          res.status(200);
-          res.send(response);
-        }
-        if (response.message === "Book not found") {
-          res.status(404);
-          res.send(response);
-        }
-      } catch (e) {
-        res.status(500);
-        res.send("Error");
-      }
-};
-
-const deleteBook = async ({ params }: Request, res: Response) => {
+const updateBook = async (req: Request, res: Response) => {
   try {
-    const { isbn } = params;
-    const response = await deleteBookService(isbn);
-    if (response.message == "Book deleted successfully") {
-      res.status(200);
-      res.send(response);
-    }
-    if (response.message == "Book not found") {
-      res.status(404);
-      res.send(response);
-    }
+    const { id } = req.params;
+    const response = await updateBookService(Number(id), req.body);
+    const status = response.message === "Book updated successfully" ? 200 : 404;
+    res.status(status).send(response);
   } catch (e) {
-    res.status(500);
-    res.send("Error");
+    res.status(500).send("Error updating book");
   }
 };
 
-export { getBooks, getBookByISBN, createBook, updateBook, deleteBook };
+const deleteBook = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const response = await deleteBookService(Number(id));
+    const status = response.message === "Book deleted successfully" ? 200 : 404;
+    res.status(status).send(response);
+  } catch (e) {
+    res.status(500).send("Error deleting book");
+  }
+};
+
+export { getBooks, getBookById, createBook, updateBook, deleteBook };
