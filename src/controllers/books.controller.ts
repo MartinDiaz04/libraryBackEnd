@@ -29,7 +29,7 @@ const getBookById = async ({params}: Request, res: Response) => {
 
 const createBook = async (req: Request, res: Response) => {
   try {
-    const response = await createBookService(req.body);
+    const response = await createBookService(req.body);    
     const status = response.message === "Book created successfully" ? 201 : 400;
     res.status(status).send(response);
   } catch (e) {
