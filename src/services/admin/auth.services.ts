@@ -1,6 +1,5 @@
 import { Admin } from "../../interfaces/admin.interface";
 import { Auth } from "../../interfaces/adminAuth.interface";
-import AdminModel from "../../models/admin.model";
 import {encrypt,  verified} from "../../utils/bcrypt.handle";
 import { generateToken } from "../../utils/jwt.handle";
 
